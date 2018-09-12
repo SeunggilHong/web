@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>SimpleStorage</title>
+<script
+  src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+<script src="https://github.com/ethereum/web3.js/blob/develop/dist/web3.min.js"></script>
+<script type="text/javascript">
+	var account
+	var contractAddr = '0xd6563f88a094cbe4ea3e3578d02d2bd506fa6f53'
+	var contractABI = [
+		{
+			"constant": true,
+			"inputs": [],
+			"name": "storedData",
+			"outputs": [
+				{
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"constant": false,
+			"inputs": [
+				{
+					"name": "x",
+					"type": "uint256"
+				}
+			],
+			"name": "set",
+			"outputs": [],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"constant": true,
+			"inputs": [],
+			"name": "get",
+			"outputs": [
+				{
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "constructor"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"name": "x",
+					"type": "uint256"
+				}
+			],
+			"name": "Set",
+			"type": "event"
+		}
+	];
+	$(function(){
+		if( typeof web3 !== 'undefined')
+		{
+			web3 = new Web3(web3.currentProvider)
+		}
+		else{
+			alert('metamask를 준비하세요')
+			alert('없으면 수동으로 이더리움넷에 접속합니다.')
+			web3 = new Web3(Web3.providers.HttpProvider('이더리움 넷 주소'))
+			//doSomething
+		}
+		account = web3.eth.accounts[0]
+// 		alert(account) //현재 메타마스크에 접속된 주소..
+
+		var contract = web3.eth.contract(contractABI).at(contractAddr)
+		
+		
+// 		alert('jQuery 엘리먼트 사용할 준비완료')
+		$('#get_btn').on('click', function(){
+// 			alert('눌렸음')
+			$('#address').text('주소 : ' + account)
+			web3.eth.getBalance(account, function(err, res){
+				$('#balance').text('잔액 : ' + web3.fromWei(res,'ether'))
+			})
+			contract.get(function(err,res){
+// 				alert(res)
+				$('#get_value').text('현재값 : ' + res)
+			})
+			
+		})
+		
+		$('#set_btn').on('click',function(){
+			var set_val = $('#set_value').val()
+// 			alert(set_val)
+			contract.set(set_val, function(err,res){
+				
+			})
+		})
+	})
+</script>
+</head>
+<body>
+	Hello World Welcome to Hell
+	<br>
+	<input id="get_btn" type="button" value="get">
+	<div id="address">주소 :</div>
+	<div id="balance">잔액 : </div>
+	<div id="get_value"></div>
+	<input id="set_value" type="text">
+	<input id="set_btn" type="button" value="set">
+dd
+</body>
+</html>
